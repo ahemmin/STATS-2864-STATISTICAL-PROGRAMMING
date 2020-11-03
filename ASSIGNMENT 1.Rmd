@@ -1,0 +1,203 @@
+---
+title: "STATS 2864 ASSIGNMENT 1"
+author: "ALEXANDER HEMMING"
+date: "10/17/2020"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+Question 1
+
+Base R has a 4-dimensional array called “Titanic”. First read the description of the dataset by
+using ?Titanic
+
+Then perform the following:
+
+• create a 2-d matrix showing the relationship between “class” and “Survived”
+
+• create a 2-d matrix showing the relationship between “Sex” and “Survived”
+
+• create a 2-d matrix showing the relationship between “Age” and “Survived”
+
+Discuss your findings
+
+```{r}
+?Titanic
+x = Titanic[,"Male","Adult","Yes"] + Titanic[,"Male","Child","Yes"] + Titanic[,"Female","Adult","Yes"] + Titanic[,"Female","Child","Yes"]
+y = Titanic[,"Male","Adult","No"] + Titanic[,"Male","Child","No"] + Titanic[,"Female","Adult","No"] + Titanic[,"Female","Child","No"]
+z = Titanic["1st",,"Adult","Yes"] + Titanic["2nd",,"Adult","Yes"] + Titanic["3rd",,"Adult","Yes"] + Titanic["Crew",,"Adult","Yes"] + Titanic["1st",,"Child","Yes"] + Titanic["2nd",,"Child","Yes"] + Titanic["3rd",,"Child","Yes"] + Titanic["Crew",,"Child","Yes"]
+u = Titanic["1st",,"Adult","No"] + Titanic["2nd",,"Adult","No"] + Titanic["3rd",,"Adult","No"] + Titanic["Crew",,"Adult","No"] + Titanic["1st",,"Child","No"] + Titanic["2nd",,"Child","No"] + Titanic["3rd",,"Child","No"] + Titanic["Crew",,"Child","No"]
+w = Titanic["1st","Male",,"Yes"] + Titanic["2nd","Male",,"Yes"] + Titanic["3rd","Male",,"Yes"] + Titanic["Crew","Male",,"Yes"] + Titanic["1st","Female",,"Yes"] + Titanic["2nd","Female",,"Yes"] + Titanic["3rd","Female",,"Yes"] + Titanic["Crew","Female",,"Yes"]
+v = Titanic["1st","Male",,"No"] + Titanic["2nd","Male",,"No"] + Titanic["3rd","Male",,"No"] + Titanic["Crew","Male",,"No"] + Titanic["1st","Female",,"No"] + Titanic["2nd","Female",,"No"] + Titanic["3rd","Female",,"No"] + Titanic["Crew","Female",,"No"]
+matrix(c(x,y),nrow = 4,ncol = 2, dimnames = list(c("1st","2nd","3rd","Crew"),c("Survived","Died")))
+matrix(c(z,u),nrow = 2,ncol = 2, dimnames = list(c("Male","Female"),c("Survived","Died")))
+matrix(c(w,v),nrow = 2,ncol = 2, dimnames = list(c("Child","Adult"),c("Survived","Died")))
+
+      
+```
+It is evident from the data that the strongest/most influencial factor in regards to survival rate from the Titanic incident was sex with women having an approximately 73% survival rate followed by class with 1st class passengers having an approximately 62% survival rate leaving age as the least influential at a survival rate of 52% for children
+
+--------------------------------------------------------------------------
+
+Question 2
+
+Create 1000 values of a random normal variable with mean zero and variance 
+1. Determine how many of the generated numbers are between -1.645 and 1.645. Does the value you obtained agrees with
+your expectation?
+
+```{r}
+set.seed(10)
+length(which((rnorm(1000,0,1)>-1.645 & (rnorm(1000,0,1))<1.645)))
+```
+Or
+```{r}
+set.seed(10)
+x = rnorm(1000,0,1)
+counter = 0
+for (i in x) {
+  if (i > -1.645 & i < 1.645){
+    counter = counter + 1
+  }
+}
+print(counter)
+```
+Yes it agrees with our expectation in that the proportion of the values within this range corresponds with the probabilities associated with the plus or minus 1.645 standard deviations away from the mean (approximately 91% in ours vs 94% from the z-table)
+
+--------------------------------------------------------------------------
+
+Question 3
+
+Create a vector (named x) of 1000 random normal variables with mean zero and variance 1.
+Apply the “cut”" function to x to create a factor with three levels: “Small”, “Medium” or “Large” (in this
+order) according to whether the individual values belong to (−∞, −1.645), (−1.645, 1.645) or (1.645, ∞).
+Make a table to show how many numbers are “Small”, “Medium” or “Large”."
+
+
+```{r}
+Number_of_Small_Value = 0
+Number_of_Medium_Value = 0
+Number_of_Large_Value = 0
+set.seed(10)
+x = rnorm(1000,0,1)
+x = cut(x,c(-Inf,-1.645,1.645,Inf),c("Small","Medium","Large"))
+for (i in x) {
+  if(i == "Small"){
+    Number_of_Small_Value = Number_of_Small_Value + 1
+  }
+  if(i == "Medium"){
+    Number_of_Medium_Value = Number_of_Medium_Value + 1
+  }
+  if(i == "Large"){
+    Number_of_Large_Value = Number_of_Large_Value + 1
+  }
+}
+data.frame(Size = c("Small", "Medium", "Large"),Frequency = c(Number_of_Small_Value,Number_of_Medium_Value,Number_of_Large_Value))
+```
+--------------------------------------------------------------------------
+
+Question 4
+
+Create 1000 random integers between 0 and 1000 (sample with replacement). Count how many
+of the numbers are divisible by 5. Does the value you obtained agrees with your expectation?
+
+
+```{r}
+Number_of_values_divisible_by_five = 0
+set.seed(10)
+x = 0:1000
+x = sample(x, 1000, replace = TRUE)
+for(i in x) {
+  if(i %% 5 == 0){
+    Number_of_values_divisible_by_five = Number_of_values_divisible_by_five + 1
+  }
+}
+Number_of_values_divisible_by_five
+```
+Yes it does.  It makes sense that the number should be around 200 since the numbers should be fairly evenly distributed and thus in every 10 values we should expect approximately 2 to be divisible by 5 on average and therefore 2*(1000/10) = 200 which is approximately what we see
+
+--------------------------------------------------------------------------
+
+Question 5
+
+(a) Count the number of each weekday (Monday to Friday) in year 2020.
+(b) Compare the number of weekdays from year 2011 to 2020.
+
+a)
+
+```{r}
+x = as.Date("2020-01-01")
+y = as.Date("2020-12-31")
+z = x + 0:(y - x)
+
+Monday_counter = length(which(weekdays(z) == "Monday"))
+Tuesday_counter = length(which(weekdays(z) == "Tuesday"))
+Wednesday_counter = length(which(weekdays(z) == "Wednesday"))
+Thursday_counter = length(which(weekdays(z) == "Thursday"))
+Friday_counter = length(which(weekdays(z) == "Friday"))
+Saturday_counter = length(which(weekdays(z) == "Saturday"))
+Sunday_counter = length(which(weekdays(z) == "Sunday"))
+
+Monday_counter 
+Tuesday_counter 
+Wednesday_counter 
+Thursday_counter 
+Friday_counter
+Saturday_counter
+Sunday_counter
+Total = Monday_counter + Tuesday_counter + Wednesday_counter + Thursday_counter + Friday_counter + Saturday_counter + Sunday_counter
+Total
+```
+
+b)
+
+```{r}
+x = as.Date("2011-01-01")
+y = as.Date("2011-12-31")
+z = x + 0:(y - x)
+
+Monday_counter = length(which(weekdays(z) == "Monday"))
+Tuesday_counter = length(which(weekdays(z) == "Tuesday"))
+Wednesday_counter = length(which(weekdays(z) == "Wednesday"))
+Thursday_counter = length(which(weekdays(z) == "Thursday"))
+Friday_counter = length(which(weekdays(z) == "Friday"))
+Saturday_counter = length(which(weekdays(z) == "Saturday"))
+Sunday_counter = length(which(weekdays(z) == "Sunday"))
+
+Monday_counter 
+Tuesday_counter 
+Wednesday_counter 
+Thursday_counter 
+Friday_counter
+Saturday_counter
+Sunday_counter
+Total = Monday_counter + Tuesday_counter + Wednesday_counter + Thursday_counter + Friday_counter + Saturday_counter + Sunday_counter
+Total
+```
+
+There are more days in 2020 than 2011 (due to leap year) and there is one more Wednesday and Thursday in 2020 compared to 2011 which has one more Saturday compared to 2020
+
+--------------------------------------------------------------------------
+
+Question 6
+
+Register a Kaggle https://www.kaggle.com/ account. Download a dataset of interest to you
+and read it into a R dataset. Determine the number of observations and the number of variables. Provide a
+summary of your dataset.
+
+Here is a summary of my data set:
+
+```{r}
+
+library(readr)
+data = read_csv("data.csv")
+summary(data)
+length(data)
+length(data$CRIM)
+
+```
+It contains 14 variables and 511 observations in total
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
