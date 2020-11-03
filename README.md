@@ -1,0 +1,2 @@
+# STATS-2864-STATISTICAL-PROGRAMMING
+Basic programming in R
